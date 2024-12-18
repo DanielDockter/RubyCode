@@ -1,0 +1,56 @@
+require 'net/http'
+require 'json'
+require 'uri'
+
+# Function to fetch a random joke from the API
+def fetch_joke
+  url = URI.parse("https://official-joke-api.appspot.com/jokes/random")
+  begin
+    response = Net::HTTP.get_response(url)
+    if response.is_a?(Net::HTTPSuccess)
+      joke = JSON.parse(response.body)
+      return joke
+    else
+      puts "Failed to fetch a joke. Response: #{response.code}"
+    end
+  rescue => e
+    puts "An error occurred: #{e.message}"
+  end
+  nil
+end
+
+# Main program loop that fetches a random joke and prints it
+def main
+  loop do
+    # Display the menu
+    puts "\n=== Joke Generator ==="
+    puts "1. Retrieve a Random Joke"
+    puts "2. Exit Program"
+    
+    # Get user input for menu choice
+    print "Enter your choice: "
+    choice = gets.strip
+
+    if choice == "1"
+      # Fetch and display a random joke
+      joke = fetch_joke
+      if joke
+        puts "\nHere's a new joke:"
+        puts "#{joke['setup']}"
+        puts "#{joke['punchline']}"
+      else
+        puts "Failed to fetch a joke."
+      end
+    elsif choice == "2"
+      # Exit the program
+      puts "Program Exiting. Hopefully you enjoyed the jokes!"
+      break
+    else
+      # Handle invalid input
+      puts "Invalid choice. Please enter 1 or 2."
+    end
+  end
+end
+
+# Entry point of the joke script
+main
